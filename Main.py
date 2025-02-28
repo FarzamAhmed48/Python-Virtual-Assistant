@@ -31,7 +31,7 @@
 
 import speech_recognition as sr
 import pyttsx3
-
+import webbrowser
 recognizer = sr.Recognizer()
 engine = pyttsx3.init()
 
@@ -39,6 +39,18 @@ def speak(text):
     engine.say(text)
     engine.runAndWait()
 
+def processCommand(instructions):
+    print(instructions)
+    if "open linkedin" in instructions.lower():
+        webbrowser.open("https://www.linkedin.com/")
+    elif "open facebook" in instructions.lower():
+        webbrowser.open("https://www.facebook.com/")
+    elif "open instagram" in instructions.lower():
+        webbrowser.open("https://www.instagram.com/")
+    elif "open google" in instructions.lower():
+        webbrowser.open("https://www.google.com/")
+    elif "open youtube" in instructions.lower():
+        webbrowser.open("https://www.youtube.com/")
 if __name__ == "__main__":
     speak("Initializing AI Assistant")
     while True:
@@ -48,27 +60,14 @@ if __name__ == "__main__":
             with sr.Microphone(sample_rate=16000) as source:  # Setting a lower sample rate
                 print("Listening...")
                 audio = r.listen(source)
-                # if(audio.lower()=="siri"):
-                #     speak("Yes, how can i help you!")
-                #     with sr.Microphone(sample_rate=16000) as source:  # Setting a lower sample rate
-                #         print("Listening...")
-                #         audio = r.listen(source,timeout=2)
-                try:
-                    word = r.recognize_google(audio)
+            word = r.recognize_google(audio)
+            if(word.lower()=="siri"):
+                speak("Yes, how can i help you!")
+                with sr.Microphone(sample_rate=16000) as source:  # Setting a lower sample rate
+                    print("Siri is Listening")
                     audio = r.listen(source)
-                    if(word.lower()=="siri"):
-                        speak("Yes, how can i help you!")
-                        with sr.Microphone(sample_rate=16000) as source:  # Setting a lower sample rate
-                            print("Siri is Listening")
-                            audio = r.listen(source)
-                            command = r.recognize_google(audio)
-                            print(command)
-                except sr.UnknownValueError:
-                    print("Sphinx could not understand audio")
-                except sr.RequestError as e:
-                    print(f"Sphinx error: {e}")
-        
-        except OSError as e:
-            print(f"Microphone error: {e}")
-            break  # Exit the loop if there's a mic issue
+                    command = r.recognize_google(audio)
+                    processCommand(command)
+        except Exception as e:
+            print(f"You are getting an error: {e}")
 
