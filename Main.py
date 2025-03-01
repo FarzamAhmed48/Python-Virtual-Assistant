@@ -32,6 +32,7 @@
 import speech_recognition as sr
 import pyttsx3
 import webbrowser
+import mp3Lib
 recognizer = sr.Recognizer()
 engine = pyttsx3.init()
 
@@ -51,6 +52,11 @@ def processCommand(instructions):
         webbrowser.open("https://www.google.com/")
     elif "open youtube" in instructions.lower():
         webbrowser.open("https://www.youtube.com/")
+    elif instructions.lower().startswith("play"):
+        song = instructions.lower().split(" ")[1]
+        link=mp3Lib.music[song]
+        print(link)
+        webbrowser.open(link)
 if __name__ == "__main__":
     speak("Initializing AI Assistant")
     while True:
