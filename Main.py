@@ -33,12 +33,52 @@ import speech_recognition as sr
 import pyttsx3
 import webbrowser
 import mp3Lib
+from gtts import gTTS
+import pygame
+from openai import OpenAI
+import os
 recognizer = sr.Recognizer()
 engine = pyttsx3.init()
+
+
+def mp3Play(mp3File):
+    pygame.mixer.init()
+    pygame.mixer.music.load(mp3File)
+    pygame.mixer.music.play()
+
+    while pygame.mixer.music.get_busy():
+        pygame.time.Clock().tick(10)
+
 
 def speak(text):
     engine.say(text)
     engine.runAndWait()
+
+def speak_new(text):
+    tts = gTTS(text)
+    tts.save('test.mp3')
+    pygame.mixer.init()
+    pygame.mixer.music.load("test.mp3")
+    pygame.mixer.music.play()
+
+    while pygame.mixer.music.get_busy():
+        pygame.time.Clock().tick(10)
+    pygame.mixer.music.unload()
+    os.remove("test.mp3")
+
+def aiAns(command):
+    client = OpenAI(
+   
+    )
+    completion = client.chat.completions.create(
+        model="gpt-4o",
+        store=True,
+        messages=[
+            {"role":"system","content":"You are a virtual Assistant named Siri"},
+            {"role": "user", "content": command}
+        ]
+    )
+    print(completion.choices[0].message)
 
 def processCommand(instructions):
     print(instructions)
@@ -57,6 +97,9 @@ def processCommand(instructions):
         link=mp3Lib.music[song]
         print(link)
         webbrowser.open(link)
+    else:
+        speak_new(aiAns(instructions))
+        
 if __name__ == "__main__":
     speak("Initializing AI Assistant")
     while True:
